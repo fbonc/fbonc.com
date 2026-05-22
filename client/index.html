@@ -9,7 +9,7 @@
 </head>
 
 <body class="relative h-screen overflow-hidden bg-radial from-frombg to-tobg">
-    <div class="relative z-10 flex flex-col justify-center h-screen items-left3 w-[40%] ml-[3%] font-display">
+    <div class="relative z-10 flex flex-col justify-center h-screen items-left3 w-[40%] ml-[3%] font-display" id="biotext">
         <h1 class="text-4xl font-light">Felipe Bonchristiano</h1>
 
         <p class="text-sm font-thin mt-2">Second-year Mathematics & Computer Science student at <a
@@ -38,8 +38,12 @@
         </div>
     </div>
 
+    <!-- <img src="./assets/testimage.png" alt="Test image" class="absolute right-0 bottom-0 h-[100%] z-0"> -->
+    
+    <canvas id="particleCanvas" class="absolute w-screen h-screen right-0 bottom-0 z-0"></canvas>
 
-    <img src="./assets/testimage.png" alt="Test image" class="absolute right-0 bottom-0 h-[100%] z-0">
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas-pro@2.0.2/dist/html2canvas-pro.min.js"></script>
+    <script type="module" src="./src/particle-system/main.js"></script>
 </body>
 
 </html>

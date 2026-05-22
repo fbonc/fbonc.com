@@ -23,5 +23,8 @@
     "@tailwindcss/cli": "^4.3.0",
     "live-server": "^1.2.2",
     "tailwindcss": "^4.3.0"
+  },
+  "dependencies": {
+    "html2canvas-pro": "^2.0.2"
   }
 }
