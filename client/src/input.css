@@ -1,1 +1,19 @@
 @import "tailwindcss";
+
+@font-face {
+  font-family: 'MyLocalFont';
+  src: url('../assets/quicksand.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+@theme {
+    --font-custom: "MyLocalFont", sans-serif;
+
+    --color-frombg: #dccdcc;
+    --color-tobg: color-mix(in srgb, var(--color-frombg) 80%, black 20%);
+
+    --color-particles: #545980;
+    --color-highlight: color-mix(in srgb, var(--color-particles) 50%, white 50%);
+}
