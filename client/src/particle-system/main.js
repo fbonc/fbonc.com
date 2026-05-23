@@ -1,6 +1,6 @@
 import { createRenderingContext, resizeCanvas, clearCanvas } from "./canvas.js";
-import { ParticleAnimator, createTextParticles } from "./particleSystem.js";
-import { renderParticles } from "./particle.js";
+import { createTextParticles, renderParticles } from "./particleSystem.js";
+import { ParticleAnimator } from "./animator.js";
 import { drawElement, samplePixels } from "./sampleElement.js";
 import { hideElement, showElement, hideCanvas } from "./utils.js";
 

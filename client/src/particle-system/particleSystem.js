@@ -1,5 +1,22 @@
 import { clearCanvas } from "./canvas.js";
-import { Particle, renderParticles, moveParticlesTowardsTarget } from "./particle.js";
+
+
+export class Particle {
+    constructor(x, y, targetX, targetY, radius, targetRadius, color, targetColor) {
+        this.x = x;
+        this.y = y;
+
+        this.targetX = targetX;
+        this.targetY = targetY;
+
+        this.radius = radius;
+        this.targetRadius = targetRadius;
+
+        this.color = color;
+        this.targetColor = targetColor;
+    }
+}
+
 
 export function createTextParticles({ sourceRC, targetRC, samplePixels }) {
     const pixels = samplePixels(sourceRC);
@@ -36,46 +53,12 @@ export function createTextParticles({ sourceRC, targetRC, samplePixels }) {
     return particles;
 }
 
-export class ParticleAnimator {
-    constructor(rc) {
-        this.rc = rc;
-        this.animationId = null;
-        this.speed = 5;
 
-        this.particles = [];
-        this.onComplete = null;
-
-        this.draw = this.draw.bind(this);
-    }
-
-    start(particles, { onComplete } = {}) {
-        this.stop();
-
-        this.particles = particles;
-        this.onComplete = onComplete;``
-
-        this.draw();
-    }
-
-    stop() {
-        if (this.animationId !== null) {
-            cancelAnimationFrame(this.animationId);
-            this.animationId = null;
-        }
-    }
-
-    draw() {
-        clearCanvas(this.rc);
-
-        const allArrived = moveParticlesTowardsTarget(this.particles, this.speed);
-        renderParticles(this.particles, this.rc);
-
-        if (allArrived) {
-            this.stop();
-            this.onComplete?.();
-            return;
-        }
-
-        this.animationId = requestAnimationFrame(this.draw);
+export function renderParticles(particles, rc) {
+    for (const p of particles) {
+        rc.ctx.beginPath();
+        rc.ctx.arc(p.x, p.y, p.radius, 0, 2 * Math.PI);
+        rc.ctx.fillStyle = p.color;
+        rc.ctx.fill();
     }
 }
