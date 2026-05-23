@@ -51,22 +51,35 @@ export class ParticleAnimator {
 }
 
 
-export function moveParticlesTowardsTarget({ particles, speed } ) {
+export function moveParticlesTowardsTarget({ particles, speed }) {
     let allArrived = true;
+
+    const minSpeed = 0.1;
+    const accelerationDistance = 120;
+    const arrivalThreshold = 0.5;
+    const speedSmoothing = 0.03; // lower = softer acceleration
 
     for (const p of particles) {
         const dx = p.targetX - p.x;
         const dy = p.targetY - p.y;
-
         const distance = Math.sqrt(dx * dx + dy * dy);
 
-        if (distance > speed) {
-            p.x += (dx / distance) * speed;
-            p.y += (dy / distance) * speed;
+        if (distance > arrivalThreshold) {
+            const t = Math.min(distance / accelerationDistance, 1);
+            const desiredSpeed = minSpeed + (speed - minSpeed) * t;
+
+            if (p.currentSpeed === undefined) p.currentSpeed = minSpeed;
+            p.currentSpeed += (desiredSpeed - p.currentSpeed) * speedSmoothing;
+
+            const moveDistance = Math.min(p.currentSpeed, distance);
+            p.x += (dx / distance) * moveDistance;
+            p.y += (dy / distance) * moveDistance;
+
             allArrived = false;
         } else {
             p.x = p.targetX;
             p.y = p.targetY;
+            p.currentSpeed = minSpeed; // reset so next transition eases in again
         }
     }
 
@@ -143,11 +156,3 @@ export function explodeParticles({ particles, speed, rc }) {
 
     return allStopped;
 }
-
-
-
-
-
-
-
-
