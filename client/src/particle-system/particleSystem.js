@@ -5,7 +5,7 @@ export function createTextParticles({ sourceRC, targetRC, samplePixels }) {
     const pixels = samplePixels(sourceRC);
     const particles = [];
 
-    const stride = 10;
+    const stride = 15;
 
     for (let i = 0; i < pixels.length; i += stride) {
         const pixel = pixels[i];
@@ -19,17 +19,7 @@ export function createTextParticles({ sourceRC, targetRC, samplePixels }) {
         const { r, g, b } = pixel;
 
         particles.push(
-            new Particle(
-                x,
-                y,
-                targetX,
-                targetY,
-                1,
-                1,
-                `rgb(${r}, ${g}, ${b})`,
-                `rgb(${r}, ${g}, ${b})`
-            )
-        );
+            new Particle(x, y, targetX, targetY, 1, 1, `rgb(${r}, ${g}, ${b})`, `rgb(${r}, ${g}, ${b})`));
     }
 
     return particles;
@@ -39,17 +29,23 @@ export class ParticleAnimator {
     constructor(rc) {
         this.rc = rc;
         this.animationId = null;
-        this.speed = 1;
+        this.speed = 5;
     }
 
-    start(particles) {
+    start(particles, { onComplete } = {}) {
         this.stop();
 
         const draw = () => {
             clearCanvas(this.rc);
 
+            const allArrived = moveParticlesTowardsTarget(particles, this.speed);
             renderParticles(particles, this.rc);
-            moveParticlesTowardsTarget(particles, this.speed);
+
+            if (allArrived) {
+                this.stop();
+                onComplete?.();
+                return;
+            }
 
             this.animationId = requestAnimationFrame(draw);
         };

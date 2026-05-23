@@ -5,12 +5,7 @@ import { nextFrame } from "./utils.js";
 
 let resizeToken = 0;
 
-export async function handleResize({
-    groundTruthRC,
-    particleCanvasRC,
-    animator,
-    sourceElement,
-}) {
+export async function handleResize({groundTruthRC, particleCanvasRC, animator, sourceElement, onParticlesArrived}) {
     const token = ++resizeToken;
 
     animator.stop();
@@ -42,5 +37,10 @@ export async function handleResize({
     if (token !== resizeToken) return;
 
     clearCanvas(particleCanvasRC);
-    animator.start(textParticles);
+    animator.start(textParticles, {
+        onComplete: () => {
+            if (token !== resizeToken) return;
+            onParticlesArrived?.();
+        },
+    });
 }

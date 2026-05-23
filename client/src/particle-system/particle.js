@@ -24,6 +24,8 @@ export function renderParticles(particles, rc) {
 }
 
 export function moveParticlesTowardsTarget(particles, speed) {
+    let allArrived = true;
+
     for (const p of particles) {
         const dx = p.targetX - p.x;
         const dy = p.targetY - p.y;
@@ -33,9 +35,12 @@ export function moveParticlesTowardsTarget(particles, speed) {
         if (distance > speed) {
             p.x += (dx / distance) * speed;
             p.y += (dy / distance) * speed;
+            allArrived = false;
         } else {
             p.x = p.targetX;
             p.y = p.targetY;
         }
     }
+
+    return allArrived;
 }

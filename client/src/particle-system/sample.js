@@ -8,6 +8,15 @@ export async function captureElement(el) {
     const bitmap = await html2canvas(el, {
         backgroundColor: null,
         scale: dpr,
+        onclone: (documentClone) => {
+            const clone = documentClone.getElementById(el.id);
+
+            if (!clone) return;
+
+            clone.style.visibility = "visible";
+            clone.style.opacity = "1";
+            clone.style.pointerEvents = "";
+        },
     });
 
     const rect = el.getBoundingClientRect();
@@ -35,12 +44,7 @@ export function samplePixels(rc) {
 
     const { canvas, ctx } = rc;
 
-    const imageData = ctx.getImageData(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
     const data = imageData.data;
     const pixels = [];
@@ -54,14 +58,7 @@ export function samplePixels(rc) {
             const x = (pixelIndex % canvas.width) / dpr;
             const y = Math.floor(pixelIndex / canvas.width) / dpr;
 
-            pixels.push({
-                x,
-                y,
-                r: data[i],
-                g: data[i + 1],
-                b: data[i + 2],
-                a: alpha,
-            });
+            pixels.push({x, y, r: data[i], g: data[i + 1], b: data[i + 2], a: alpha,});
         }
     }
 

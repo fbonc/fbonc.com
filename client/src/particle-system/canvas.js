@@ -34,10 +34,5 @@ export function resizeCanvas(rc) {
 }
 
 export function clearCanvas(rc) {
-    rc.ctx.clearRect(
-        0,
-        0,
-        rc.canvas.clientWidth,
-        rc.canvas.clientHeight
-    );
+    rc.ctx.clearRect(0, 0, rc.canvas.clientWidth, rc.canvas.clientHeight);
 }
