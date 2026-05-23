@@ -1,6 +1,6 @@
 import { createRenderingContext, resizeCanvas, clearCanvas } from "./canvas.js";
 import { createTextParticles, renderParticles } from "./particleSystem.js";
-import { ParticleAnimator } from "./animator.js";
+import { ParticleAnimator, moveParticlesTowardsTarget } from "./animator.js";
 import { drawElement, samplePixels } from "./sampleElement.js";
 import { hideElement, showElement, hideCanvas } from "./utils.js";
 
@@ -48,13 +48,15 @@ if (!sourceElement) {
 
 const textParticles = await initializeParticles();
 
-const animator = new ParticleAnimator(particleCanvasRC);
+const animator = new ParticleAnimator({
+    rc: particleCanvasRC,
+    particles: textParticles,
+    animation: moveParticlesTowardsTarget,
+    onComplete: () => { fadeToHtml?.(sourceElement, particleCanvas); },
+    speed: 5
+});
 
 const particleCanvas = particleCanvasRC.canvas;
 window.addEventListener("click", () => {
-    animator.start(textParticles, {
-        onComplete: () => {
-            fadeToHtml?.(sourceElement, particleCanvas);
-        },
-    });
+    animator.start();
 });

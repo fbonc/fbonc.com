@@ -3,23 +3,20 @@ import { renderParticles } from "./particleSystem.js";
 
 
 export class ParticleAnimator {
-    constructor(rc) {
+    constructor({ rc, particles, animation, onComplete = null, speed = 5 }) {
         this.rc = rc;
-        this.animationId = null;
-        this.speed = 5;
+        this.particles = particles;
+        this.animation = animation;
+        this.onComplete = onComplete;
+        this.speed = speed;
 
-        this.particles = [];
-        this.onComplete = null;
+        this.animationId = null;
 
         this.draw = this.draw.bind(this);
     }
 
-    start(particles, { onComplete } = {}) {
+    start() {
         this.stop();
-
-        this.particles = particles;
-        this.onComplete = onComplete;``
-
         this.draw();
     }
 
@@ -33,7 +30,7 @@ export class ParticleAnimator {
     draw() {
         clearCanvas(this.rc);
 
-        const allArrived = moveParticlesTowardsTarget(this.particles, this.speed);
+        const allArrived = this.animation(this.particles, this.speed);
         renderParticles(this.particles, this.rc);
 
         if (allArrived) {
@@ -47,7 +44,7 @@ export class ParticleAnimator {
 }
 
 
-function moveParticlesTowardsTarget(particles, speed) {
+export function moveParticlesTowardsTarget(particles, speed) {
     let allArrived = true;
 
     for (const p of particles) {
@@ -68,3 +65,26 @@ function moveParticlesTowardsTarget(particles, speed) {
 
     return allArrived;
 }
+
+
+export function moveParticlesInCircle(particles, speed) {
+
+    const centerX = targetRC.canvas.clientWidth / 2;
+    const centerY = targetRC.canvas.clientHeight / 2;
+
+    for (const p of particles) {
+
+        
+    }
+
+    return false;
+}
+
+
+
+
+
+
+
+
+
