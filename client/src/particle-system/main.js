@@ -1,8 +1,17 @@
 import { createRenderingContext, resizeCanvas, clearCanvas } from "./canvas.js";
 import { createTextParticles, renderParticles } from "./particleSystem.js";
-import { ParticleAnimator, moveParticlesTowardsTarget } from "./animator.js";
+import { ParticleAnimator, moveParticlesTowardsTarget, moveParticlesInCircle, explodeParticles } from "./animator.js";
 import { drawElement, samplePixels } from "./sampleElement.js";
 import { hideElement, showElement, hideCanvas } from "./utils.js";
+
+
+export let activeAnimator = null;
+
+function startAnimator(animator) {
+    activeAnimator?.stop();
+    activeAnimator = animator;
+    animator.start();
+}
 
 
 export const FADE_DURATION_MS = 1000;
@@ -48,15 +57,30 @@ if (!sourceElement) {
 
 const textParticles = await initializeParticles();
 
-const animator = new ParticleAnimator({
+const particlesCircleAnimator = new ParticleAnimator({
+    rc: particleCanvasRC,
+    particles: textParticles,
+    animation: moveParticlesInCircle,
+    speed: 1.5
+});
+
+startAnimator(particlesCircleAnimator);
+
+const particlesToTextAnimator = new ParticleAnimator({
     rc: particleCanvasRC,
     particles: textParticles,
     animation: moveParticlesTowardsTarget,
     onComplete: () => { fadeToHtml?.(sourceElement, particleCanvas); },
-    speed: 5
+    speed: 10
 });
 
-const particleCanvas = particleCanvasRC.canvas;
+
+// const explodeParticlesAnimator = new ParticleAnimator({
+//     rc: particleCanvasRC,
+//     particles: textParticles,
+//     animation: explodeParticles,
+// })
+
 window.addEventListener("click", () => {
-    animator.start();
+    startAnimator(particlesToTextAnimator);
 });

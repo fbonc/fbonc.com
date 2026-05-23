@@ -12,7 +12,7 @@
     --font-custom: "MyLocalFont", sans-serif;
 
     --color-frombg: #dccdcc;
-    --color-tobg: color-mix(in srgb, var(--color-frombg) 80%, black 20%);
+    --color-tobg: color-mix(in srgb, var(--color-frombg) 70%, black 30%);
     
 
     --color-particles: #545980;

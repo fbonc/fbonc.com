@@ -10,37 +10,81 @@
 
 <body class="relative h-screen overflow-hidden bg-radial from-frombg to-tobg text-text">
 
-    <div class="relative z-10 flex flex-col justify-center h-screen items-left3 w-[40%] ml-[3%] font-display" id="biotext">
-        <h1 class="text-4xl font-light">Felipe Bonchristiano</h1>
+    <div
+        class="absolute z-10 left-[22.22%] top-1/2 -translate-x-1/2 -translate-y-1/2
+               w-[clamp(630px,34vw,820px)] h-[clamp(320px,28vh,430px)]
+               flex flex-col justify-center
+               font-display"
+        id="biotext"
+    >
+        <h1 class="text-[clamp(2.25rem,2.4vw,3.25rem)] font-light">
+            Felipe Bonchristiano
+        </h1>
 
-        <p class="text-sm font-thin mt-2">Second-year Mathematics & Computer Science student at <a
+        <p class="text-[clamp(0.875rem,0.9vw,1.1rem)] font-thin mt-2">
+            Second-year Mathematics & Computer Science student at
+            <a
                 href="https://illinois.edu/"
-                class="bg-highlight px-1 rounded hover:bg-particles/50 transition-colors" target="_blank">UIUC</a>
+                class="bg-highlight px-1 rounded hover:bg-particles/50 transition-colors"
+                target="_blank"
+            >UIUC</a>
             from Brazil, focusing on artificial intelligence, applied analysis, and probability. My broader interests
-            include computational biology, especially protein modelling, and philosophy, particularly metaphysics and
-            epistemology. </p>
-        <p class="text-sm font-thin mt-3">I currently conduct research in machine learning and healthcare in Prof.
-            Jimeng Sun’s <a href="https://www.sunlab.org/"
-                class="bg-highlight px-1 rounded hover:bg-particles/50 transition-colors" target="_blank">SunLab</a>
-            and previously interned at <a href="https://www.btgpactual.us/"
-                class="bg-highlight px-1 rounded hover:bg-particles/50 transition-colors" target="_blank">BTG
-                Pactual</a>, Latin America’s largest investment bank. </p>
+            include computational biology and philosophy, particularly metaphysics and epistemology.
+        </p>
+
+        <p class="text-[clamp(0.875rem,0.9vw,1.1rem)] font-thin mt-3">
+            I currently conduct research in machine learning and healthcare in Prof. Jimeng Sun’s
+            <a
+                href="https://www.sunlab.org/"
+                class="bg-highlight px-1 rounded hover:bg-particles/50 transition-colors"
+                target="_blank"
+            >SunLab</a>
+            and previously interned at
+            <a
+                href="https://www.btgpactual.us/"
+                class="bg-highlight px-1 rounded hover:bg-particles/50 transition-colors"
+                target="_blank"
+            >BTG Pactual</a>,
+            Latin America’s largest investment bank, as a software engineer.
+        </p>
 
         <hr class="mt-4 border-zinc-500 w-[102%] -ml-[1%]">
 
-        <div class="flex flex-wrap gap-3 mt-4 text-sm font-thin italic`">
+        <div class="flex flex-wrap gap-3 mt-4 text-[clamp(0.875rem,0.9vw,1.1rem)] font-thin italic">
             <button
-                class="font-light transition-all duration-300 hover:[text-shadow:0_0_8px_rgba(255,255,255,0.8)]">projects</button>
+                class="font-light transition-all duration-300 hover:[text-shadow:0_0_8px_rgba(255,255,255,0.8)]"
+            >
+                projects
+            </button>
+
             <button
-                class="font-light transition-all duration-300 hover:[text-shadow:0_0_8px_rgba(255,255,255,0.8)]" target="_blank">other</button>
-            <a href="https://www.linkedin.com/in/fbonc" class="hover:text-gray-600 transition-colors" target="_blank">linkedin</a>
-            <a href="/resume.pdf" class="hover:text-gray-600 transition-colors" target="_blank">resume</a>
-            <a href="https://github.com/fbonc" class="hover:text-gray-600 transition-colors" target="_blank">github</a>
+                class="font-light transition-all duration-300 hover:[text-shadow:0_0_8px_rgba(255,255,255,0.8)]"
+            >
+                other
+            </button>
+
+            <a
+                href="https://www.linkedin.com/in/fbonc"
+                class="hover:text-gray-600 transition-colors"
+                target="_blank"
+            >linkedin</a>
+
+            <a
+                href="/resume.pdf"
+                class="hover:text-gray-600 transition-colors"
+                target="_blank"
+            >resume</a>
+
+            <a
+                href="https://github.com/fbonc"
+                class="hover:text-gray-600 transition-colors"
+                target="_blank"
+            >github</a>
         </div>
     </div>
 
     <!-- <img src="./assets/testimage.png" alt="Test image" class="absolute right-0 bottom-0 h-[100%] z-0"> -->
-    
+
     <canvas id="particleCanvas" class="absolute w-screen h-screen right-0 bottom-0 z-0"></canvas>
     <canvas id="groundTruthCanvas" class="hidden absolute w-screen h-screen right-0 bottom-0 z-0"></canvas>
 
