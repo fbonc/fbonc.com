@@ -5,6 +5,7 @@ export class RenderingContext {
     }
 }
 
+
 export function createRenderingContext(canvasId, options = {}) {
     const canvas = document.getElementById(canvasId);
 
@@ -21,6 +22,7 @@ export function createRenderingContext(canvasId, options = {}) {
     return new RenderingContext(canvas, ctx);
 }
 
+
 export function resizeCanvas(rc) {
     const dpr = window.devicePixelRatio || 1;
 
@@ -32,6 +34,7 @@ export function resizeCanvas(rc) {
 
     rc.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
+
 
 export function clearCanvas(rc) {
     rc.ctx.clearRect(0, 0, rc.canvas.clientWidth, rc.canvas.clientHeight);

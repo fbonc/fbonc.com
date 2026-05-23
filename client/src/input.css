@@ -13,7 +13,20 @@
 
     --color-frombg: #dccdcc;
     --color-tobg: color-mix(in srgb, var(--color-frombg) 80%, black 20%);
+    
 
     --color-particles: #545980;
     --color-highlight: color-mix(in srgb, var(--color-particles) 50%, white 50%);
+
+    --color-text: #000000;
+
+
+    /* --color-frombg: #401b14;
+    --color-tobg: color-mix(in srgb, var(--color-frombg) 50%, black 50%);
+    
+
+    --color-particles: #e1ae88;
+    --color-highlight: color-mix(in srgb, var(--color-particles) 50%, black 50%);
+
+    --color-text: #e9ddd4; */
 }

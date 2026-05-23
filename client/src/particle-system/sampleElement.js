@@ -1,4 +1,15 @@
-export async function captureElement(el) {
+import { showElement, hideElement } from "./utils.js";
+import { clearCanvas } from "./canvas.js";
+
+export async function drawElement(el, rc) {
+    const captured = await captureElement(el);
+    
+    clearCanvas(rc);
+    drawCapturedElement(rc.ctx, captured);
+}
+
+
+async function captureElement(el) {
     if (!el) {
         throw new Error("Cannot capture missing element.");
     }
@@ -21,13 +32,14 @@ export async function captureElement(el) {
 
     const rect = el.getBoundingClientRect();
 
+
     return {
         bitmap,
         rect,
     };
 }
 
-export function drawCapturedElement(ctx, captured) {
+function drawCapturedElement(ctx, captured) {
     const { bitmap, rect } = captured;
 
     ctx.drawImage(
