@@ -1,34 +1,57 @@
+import { downloadCanvas } from "./utils.js";
+
 async function captureBitmap(el) {
-  return await html2canvas(el, {
-    backgroundColor: null,
-    scale: window.devicePixelRatio,
-  });
+    return await html2canvas(el, {
+        backgroundColor: null,
+        scale: window.devicePixelRatio,
+    });
     // const ctx = bitmap.getContext("2d");
     // const imageData = ctx.getImageData(0, 0, bitmap.width, bitmap.height);
 }
 
-function downloadCanvas(canvas, filename="download.png") {
-    const dataUrl = canvas.toDataURL('image/png');
-    
-    const link = document.createElement('a');
-    link.href = dataUrl;
-    link.download = filename;
-    
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
+export async function captureElement(el) {
+    const bitmap = await html2canvas(el, {
+        backgroundColor: null,
+        scale: window.devicePixelRatio || 1,
+    });
 
-export async function drawElement(ctx, el) {
-    const bitmap = await captureBitmap(el);
     const rect = el.getBoundingClientRect();
-    // downloadCanvas(bitmap);
-    ctx.drawImage(bitmap, rect.left, rect.top, el.offsetWidth, el.offsetHeight);
+
+    return { bitmap, rect };
 }
 
 
+export function drawCapturedElement(ctx, captured) {
+    const { bitmap, rect } = captured;
 
-// create array with valid pixels (groundTruth)
+    ctx.drawImage(bitmap, rect.left, rect.top, rect.width, rect.height);
+}
+
+export function samplePixels(rc) {
+    const canvas = rc.canvas;
+    const ctx = rc.ctx;
+    const dpr = window.devicePixelRatio || 1;
+
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+
+    const nonTransparentPixels = [];
+
+    for (let i = 0; i < data.length; i += 4) {
+        const alpha = data[i + 3];
+
+        if (alpha > 0) {
+            const pixelIndex = i / 4;
+
+            const x = (pixelIndex % canvas.width) / dpr;
+            const y = Math.floor(pixelIndex / canvas.width) / dpr;
+
+            nonTransparentPixels.push({ x, y, r: data[i], g: data[i + 1], b: data[i + 2], a: alpha });
+        }
+    }
+
+    return nonTransparentPixels;
+}
 
 
 
