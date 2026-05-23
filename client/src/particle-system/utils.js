@@ -9,3 +9,8 @@ export function downloadCanvas(canvas, filename="download.png") {
     link.click();
     document.body.removeChild(link);
 }
+
+
+export function nextFrame() {
+    return new Promise(resolve => requestAnimationFrame(resolve));
+}
