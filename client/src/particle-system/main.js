@@ -72,17 +72,31 @@ const particlesToTextAnimator = new ParticleAnimator({
     rc: particleCanvasRC,
     particles: textParticles,
     animation: moveParticlesTowardsTarget,
-    onComplete: () => { fadeToHtml?.(sourceElement, particleCanvas); },
-    speed: 20
+    onComplete: () => {
+        fadeToHtml?.(sourceElement, particleCanvas);
+    },
+    speed: 10,
+    animationArgs: {
+        minSpeed: 0.01,
+        accelerationDistance: 120,
+        arrivalThreshold: 0.5,
+        speedSmoothing: 0.005
+    }
 });
 
-
-// const explodeParticlesAnimator = new ParticleAnimator({
-//     rc: particleCanvasRC,
-//     particles: textParticles,
-//     animation: explodeParticles,
-// })
+const explodeParticlesAnimator = new ParticleAnimator({
+    rc: particleCanvasRC,
+    particles: textParticles,
+    animation: explodeParticles,
+    onComplete: () => {
+        startAnimator(particlesToTextAnimator);
+    },
+    speed: 5,
+    animationArgs: {
+        stopThreshold: 0.05
+    }
+});
 
 window.addEventListener("click", () => {
-    startAnimator(particlesToTextAnimator);
+    startAnimator(explodeParticlesAnimator);
 });

@@ -88,13 +88,16 @@ export class ParticleAnimator {
     }
 }
 
-export function moveParticlesTowardsTarget({ particles, speed }) {
-    let allArrived = true;
 
-    const minSpeed = 0.01;
-    const accelerationDistance = 120;
-    const arrivalThreshold = 0.5;
-    const speedSmoothing = 0.005; // lower = softer acceleration
+export function moveParticlesTowardsTarget({
+    particles,
+    speed,
+    minSpeed = 0.01,
+    accelerationDistance = 120,
+    arrivalThreshold = 0.5,
+    speedSmoothing = 0.005
+}) {
+    let allArrived = true;
 
     for (const p of particles) {
         const dx = p.targetX - p.x;
@@ -109,6 +112,7 @@ export function moveParticlesTowardsTarget({ particles, speed }) {
             p.currentSpeed += (desiredSpeed - p.currentSpeed) * speedSmoothing;
 
             const moveDistance = Math.min(p.currentSpeed, distance);
+
             p.x += (dx / distance) * moveDistance;
             p.y += (dy / distance) * moveDistance;
 
@@ -116,7 +120,7 @@ export function moveParticlesTowardsTarget({ particles, speed }) {
         } else {
             p.x = p.targetX;
             p.y = p.targetY;
-            p.currentSpeed = minSpeed; // reset so next transition eases in again
+            p.currentSpeed = minSpeed;
         }
     }
 
@@ -153,13 +157,16 @@ export function moveParticlesInCircle({ particles, speed, rc }) {
 }
 
 
-
-export function explodeParticles({ particles, speed, rc }) {
+export function explodeParticles({
+    particles,
+    speed,
+    rc,
+    stopThreshold = 0.05
+}) {
     const centerX = rc.canvas.clientWidth / 2;
     const centerY = rc.canvas.clientHeight / 2;
 
     let allStopped = true;
-    const stopThreshold = 0.05;
 
     for (const p of particles) {
         if (p.explodeVX === undefined || p.explodeVY === undefined) {
