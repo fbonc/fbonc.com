@@ -1,8 +1,10 @@
 import { createRenderingContext, resizeCanvas, clearCanvas } from "./canvas.js";
 import { createTextParticles, renderParticles } from "./particleSystem.js";
-import { ParticleAnimator, moveParticlesTowardsTarget, moveParticlesInCircle, explodeParticles } from "./animator.js";
+import { ParticleAnimator, moveParticlesTowardsTarget, moveParticlesInCircle } from "./animator.js";
+import { explodeParticles, moveParticlesInOrbit } from "./animator.js";
 import { drawElement, samplePixels } from "./sampleElement.js";
 import { hideElement, showElement, hideCanvas } from "./utils.js";
+import { fadeOut, pulseOpacity, fadeIn } from "./utils.js";
 
 
 export let activeAnimator = null;
@@ -46,27 +48,45 @@ async function initializeParticles() {
 }
 
 
+function randomOrbitArgs() {
+    const rand = (min, max) => min + Math.random() * (max - min);
+    const randInt = (min, max) => Math.floor(rand(min, max + 1));
+
+    return {
+        breathAmount: rand(0.15, 0.4),
+        breathSpeed: rand(0.0005, 0.0015),
+        ripple: rand(0.015, 0.05) * (Math.random() < 0.2 ? -1 : 1),
+        wobbleAmount: rand(0.3, 0.7),
+        wobbleHarmonic: randInt(2, 7),
+        twist: rand(-0.6, 0.6)
+    };
+}
+
+const clickAnywhereEl = document.getElementById("clickanywhere");
+
+
 const groundTruthRC = createRenderingContext("groundTruthCanvas", { willReadFrequently: true, });
 const particleCanvasRC = createRenderingContext("particleCanvas", { willReadFrequently: true, });
 
 
 const sourceElement = document.getElementById("biotext");
-if (!sourceElement) {
-    throw new Error("Cannot find #biotext source element.");
-}
 
 const textParticles = await initializeParticles();
 
-const particlesCircleAnimator = new ParticleAnimator({
+
+const particlesOrbitAnimator = new ParticleAnimator({
     rc: particleCanvasRC,
     particles: textParticles,
-    animation: moveParticlesInCircle,
-    speed: 3,
-    smoothStop: true,
-    stopDuration: 1000
-});
+    animation: moveParticlesInOrbit,
+    speed: 1,
+    animationArgs: randomOrbitArgs(),
+})
 
-startAnimator(particlesCircleAnimator);
+startAnimator(particlesOrbitAnimator);
+fadeIn(particleCanvasRC.canvas, FADE_DURATION_MS);
+fadeIn(clickAnywhereEl, FADE_DURATION_MS, "block", 0.8).then(() => {
+    pulseOpacity(clickAnywhereEl, {minOpacity: 0.4, maxOpacity: 0.8, duration: 3000});
+});
 
 const particlesToTextAnimator = new ParticleAnimator({
     rc: particleCanvasRC,
@@ -91,12 +111,14 @@ const explodeParticlesAnimator = new ParticleAnimator({
     onComplete: () => {
         startAnimator(particlesToTextAnimator);
     },
-    speed: 5,
+    speed: 3,
     animationArgs: {
-        stopThreshold: 0.05
+        stopThreshold: 0.1,
+        deceleration: 0.97
     }
 });
 
 window.addEventListener("click", () => {
     startAnimator(explodeParticlesAnimator);
+    fadeOut(clickAnywhereEl, 1000);
 });

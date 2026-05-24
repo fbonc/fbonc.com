@@ -3,69 +3,44 @@ import { renderParticles } from "./particleSystem.js";
 
 
 export class ParticleAnimator {
-    constructor({ rc, particles, animation, onComplete = null, speed = 5, animationArgs = {}, smoothStop = false, stopDuration = 300 }) {
+    constructor({
+        rc,
+        particles,
+        animation,
+        onComplete = null,
+        speed = 5,
+        animationArgs = {}
+    }) {
         this.rc = rc;
         this.particles = particles;
         this.animation = animation;
         this.onComplete = onComplete;
         this.speed = speed;
         this.animationArgs = animationArgs;
-        this.smoothStop = smoothStop;
-        this.stopDuration = stopDuration;
 
         this.animationId = null;
-        this.isStopping = false;
-        this.stopStartTime = null;
 
         this.draw = this.draw.bind(this);
     }
 
     start() {
         this.stop();
-        this.isStopping = false;
-        this.stopStartTime = null;
         this.draw();
     }
 
-    stop({ immediate = false } = {}) {
-        if (this.animationId === null) return Promise.resolve();
-
-        if (!this.smoothStop || immediate) {
+    stop() {
+        if (this.animationId !== null) {
             cancelAnimationFrame(this.animationId);
             this.animationId = null;
-            return Promise.resolve();
         }
-
-        if (!this.isStopping) {
-            this.isStopping = true;
-            this.stopStartTime = performance.now();
-            this._stopPromise = new Promise(resolve => { this._stopResolve = resolve; });
-        }
-        return this._stopPromise;
     }
 
     draw() {
         clearCanvas(this.rc);
 
-        let effectiveSpeed = this.speed;
-        if (this.isStopping) {
-            const t = Math.min((performance.now() - this.stopStartTime) / this.stopDuration, 1);
-            effectiveSpeed = this.speed * (1 - t);
-
-            if (t >= 1) {
-                this.isStopping = false;
-                cancelAnimationFrame(this.animationId);
-                this.animationId = null;
-                this._stopResolve?.();
-                this._stopResolve = null;
-                this.onComplete?.();
-                return;
-            }
-        }
-
         const allArrived = this.animation({
             particles: this.particles,
-            speed: effectiveSpeed,
+            speed: this.speed,
             rc: this.rc,
             ...this.animationArgs
         });
@@ -73,21 +48,14 @@ export class ParticleAnimator {
         renderParticles(this.particles, this.rc);
 
         if (allArrived) {
-            if (!this.smoothStop) {
-                this.stop({ immediate: true });
-                this.onComplete?.();
-                return;
-            }
-            if (!this.isStopping) {
-                this.isStopping = true;
-                this.stopStartTime = performance.now();
-            }
+            this.stop();
+            this.onComplete?.();
+            return;
         }
 
         this.animationId = requestAnimationFrame(this.draw);
     }
 }
-
 
 export function moveParticlesTowardsTarget({
     particles,
@@ -157,11 +125,52 @@ export function moveParticlesInCircle({ particles, speed, rc }) {
 }
 
 
+export function moveParticlesInOrbit({
+    particles, speed, rc,
+    breathAmount = 0.25,
+    breathSpeed = 0.0008,
+    ripple = 0.025,
+    wobbleAmount = 0.4,
+    wobbleHarmonic = 3,
+    twist = 0.3
+}) {
+    const centerX = rc.canvas.clientWidth / 2;
+    const centerY = rc.canvas.clientHeight / 2;
+    const t = performance.now() * breathSpeed;
+
+    for (const p of particles) {
+        if (p.baseRadius === undefined) {
+            const dx = p.x - centerX;
+            const dy = p.y - centerY;
+            const d = Math.sqrt(dx * dx + dy * dy);
+            p.baseRadius = d || 1;
+            p.baseAngle = Math.atan2(dy, dx);
+            p.angle = p.baseAngle;
+        }
+
+        p.angle += speed / p.baseRadius;
+
+        const radiusPhase = t - p.baseRadius * ripple;
+        const breath = Math.sin(radiusPhase) * breathAmount;
+        const r = p.baseRadius * (1 + breath);
+
+        const wobble = Math.sin(wobbleHarmonic * p.angle + t * 2) * wobbleAmount / wobbleHarmonic;
+        const twistOffset = breath * twist;
+        const displayAngle = p.angle + wobble + twistOffset;
+
+        p.x = centerX + Math.cos(displayAngle) * r;
+        p.y = centerY + Math.sin(displayAngle) * r;
+    }
+
+    return false;
+}
+
 export function explodeParticles({
     particles,
     speed,
     rc,
-    stopThreshold = 0.05
+    stopThreshold = 0.05,
+    deceleration = 0.98
 }) {
     const centerX = rc.canvas.clientWidth / 2;
     const centerY = rc.canvas.clientHeight / 2;
@@ -182,8 +191,8 @@ export function explodeParticles({
         p.x += p.explodeVX;
         p.y += p.explodeVY;
 
-        p.explodeVX *= 0.98;
-        p.explodeVY *= 0.98;
+        p.explodeVX *= deceleration;
+        p.explodeVY *= deceleration;
 
         const velocity = Math.sqrt(
             p.explodeVX * p.explodeVX +
@@ -200,3 +209,5 @@ export function explodeParticles({
 
     return allStopped;
 }
+
+
