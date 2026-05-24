@@ -3,61 +3,98 @@ import { renderParticles } from "./particleSystem.js";
 
 
 export class ParticleAnimator {
-    constructor({ rc, particles, animation, onComplete = null, speed = 5, animationArgs = {} }) {
+    constructor({ rc, particles, animation, onComplete = null, speed = 5, animationArgs = {}, smoothStop = false, stopDuration = 300 }) {
         this.rc = rc;
         this.particles = particles;
         this.animation = animation;
         this.onComplete = onComplete;
         this.speed = speed;
         this.animationArgs = animationArgs;
+        this.smoothStop = smoothStop;
+        this.stopDuration = stopDuration;
 
         this.animationId = null;
+        this.isStopping = false;
+        this.stopStartTime = null;
 
         this.draw = this.draw.bind(this);
     }
 
     start() {
         this.stop();
+        this.isStopping = false;
+        this.stopStartTime = null;
         this.draw();
     }
 
-    stop() {
-        if (this.animationId !== null) {
+    stop({ immediate = false } = {}) {
+        if (this.animationId === null) return Promise.resolve();
+
+        if (!this.smoothStop || immediate) {
             cancelAnimationFrame(this.animationId);
             this.animationId = null;
+            return Promise.resolve();
         }
+
+        if (!this.isStopping) {
+            this.isStopping = true;
+            this.stopStartTime = performance.now();
+            this._stopPromise = new Promise(resolve => { this._stopResolve = resolve; });
+        }
+        return this._stopPromise;
     }
 
     draw() {
         clearCanvas(this.rc);
 
+        let effectiveSpeed = this.speed;
+        if (this.isStopping) {
+            const t = Math.min((performance.now() - this.stopStartTime) / this.stopDuration, 1);
+            effectiveSpeed = this.speed * (1 - t);
+
+            if (t >= 1) {
+                this.isStopping = false;
+                cancelAnimationFrame(this.animationId);
+                this.animationId = null;
+                this._stopResolve?.();
+                this._stopResolve = null;
+                this.onComplete?.();
+                return;
+            }
+        }
+
         const allArrived = this.animation({
             particles: this.particles,
-            speed: this.speed,
+            speed: effectiveSpeed,
             rc: this.rc,
             ...this.animationArgs
         });
-       
+
         renderParticles(this.particles, this.rc);
 
         if (allArrived) {
-            this.stop();
-            this.onComplete?.();
-            return;
+            if (!this.smoothStop) {
+                this.stop({ immediate: true });
+                this.onComplete?.();
+                return;
+            }
+            if (!this.isStopping) {
+                this.isStopping = true;
+                this.stopStartTime = performance.now();
+            }
         }
 
         this.animationId = requestAnimationFrame(this.draw);
     }
 }
 
-
 export function moveParticlesTowardsTarget({ particles, speed }) {
     let allArrived = true;
 
-    const minSpeed = 0.1;
+    const minSpeed = 0.01;
     const accelerationDistance = 120;
     const arrivalThreshold = 0.5;
-    const speedSmoothing = 0.03; // lower = softer acceleration
+    const speedSmoothing = 0.005; // lower = softer acceleration
 
     for (const p of particles) {
         const dx = p.targetX - p.x;

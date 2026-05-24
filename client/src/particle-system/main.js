@@ -7,8 +7,8 @@ import { hideElement, showElement, hideCanvas } from "./utils.js";
 
 export let activeAnimator = null;
 
-function startAnimator(animator) {
-    activeAnimator?.stop();
+async function startAnimator(animator) {
+    await activeAnimator?.stop();
     activeAnimator = animator;
     animator.start();
 }
@@ -61,7 +61,9 @@ const particlesCircleAnimator = new ParticleAnimator({
     rc: particleCanvasRC,
     particles: textParticles,
     animation: moveParticlesInCircle,
-    speed: 1.5
+    speed: 3,
+    smoothStop: true,
+    stopDuration: 1000
 });
 
 startAnimator(particlesCircleAnimator);
@@ -71,7 +73,7 @@ const particlesToTextAnimator = new ParticleAnimator({
     particles: textParticles,
     animation: moveParticlesTowardsTarget,
     onComplete: () => { fadeToHtml?.(sourceElement, particleCanvas); },
-    speed: 10
+    speed: 20
 });
 
 
