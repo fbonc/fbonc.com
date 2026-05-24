@@ -62,8 +62,8 @@ async function initializeParticles() {
         spawn: spawnInRing({
             centerX: particleCanvasRC.canvas.clientWidth / 2,
             centerY: particleCanvasRC.canvas.clientHeight / 2,
-            innerRadius: 250,
-            outerRadius: 300,
+            innerRadius: 175,
+            outerRadius: 200,
         }),
     });
 
@@ -113,9 +113,12 @@ const particlesOrbitAnimator = new ParticleAnimator({
     animationArgs: randomOrbitArgs(),
 })
 
+let clickAnywhereDismissed = false;
+
 startAnimator(particlesOrbitAnimator);
 fadeIn(particleCanvasRC.canvas, FADE_DURATION_MS);
 fadeIn(clickAnywhereEl, FADE_DURATION_MS, "block", 0.8).then(() => {
+    if (clickAnywhereDismissed) return;
     pulseOpacity(clickAnywhereEl, { minOpacity: 0.4, maxOpacity: 0.8, duration: 3000 });
 });
 
@@ -218,6 +221,7 @@ bindTransition("backFromProjectsBtn", biotextEl);
 bindTransition("backFromOtherBtn", biotextEl);
 
 window.addEventListener("click", async () => {
+    clickAnywhereDismissed = true;
     startAnimator(explodeParticlesAnimator);
     await fadeOut(clickAnywhereEl, 1000);
 });

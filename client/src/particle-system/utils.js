@@ -18,7 +18,16 @@ export function nextFrame() {
 }
 
 
+function clearPendingFade(el) {
+    if (el._pendingFadeTimeout) {
+        clearTimeout(el._pendingFadeTimeout);
+        el._pendingFadeTimeout = null;
+    }
+}
+
+
 export function hideElement(el) {
+    clearPendingFade(el);
     el.style.transition = "none";
     el.style.visibility = "hidden";
     el.style.opacity = "0";
@@ -27,6 +36,7 @@ export function hideElement(el) {
 
 
 export function showElement(el) {
+    clearPendingFade(el);
     el.style.transition = `opacity ${FADE_DURATION_MS}ms ease`;
     el.style.display = "";
     el.style.visibility = "visible";
@@ -39,6 +49,7 @@ export function showElement(el) {
 
 
 export function hideCanvas(c) {
+    clearPendingFade(c);
     c.style.transition = `opacity ${FADE_DURATION_MS}ms ease`;
     c.style.visibility = "visible";
 
@@ -46,13 +57,15 @@ export function hideCanvas(c) {
         c.style.opacity = "0";
     });
 
-    setTimeout(() => {
+    c._pendingFadeTimeout = setTimeout(() => {
+        c._pendingFadeTimeout = null;
         c.style.visibility = "hidden";
     }, FADE_DURATION_MS);
 }
-1
+
 
 export function showCanvas(c) {
+    clearPendingFade(c);
     c.style.transition = "none";
     c.style.visibility = "visible";
     c.style.opacity = "1";
@@ -60,9 +73,12 @@ export function showCanvas(c) {
 
 
 export function fadeInCanvas(c, duration = FADE_DURATION_MS) {
+    clearPendingFade(c);
+    const currentOpacity = getComputedStyle(c).opacity;
+
     c.style.transition = "none";
     c.style.visibility = "visible";
-    c.style.opacity = "0";
+    c.style.opacity = currentOpacity;
 
     c.offsetHeight;
 
@@ -70,7 +86,8 @@ export function fadeInCanvas(c, duration = FADE_DURATION_MS) {
     c.style.opacity = "1";
 
     return new Promise(resolve => {
-        setTimeout(() => {
+        c._pendingFadeTimeout = setTimeout(() => {
+            c._pendingFadeTimeout = null;
             c.style.transition = "";
             resolve();
         }, duration);
@@ -79,10 +96,11 @@ export function fadeInCanvas(c, duration = FADE_DURATION_MS) {
 
 
 export function fadeOut(element, duration = 300) {
+    clearPendingFade(element);
+    const currentOpacity = getComputedStyle(element).opacity;
+
     element.style.animation = "none";
     element.style.transition = "none";
-
-    const currentOpacity = getComputedStyle(element).opacity;
     element.style.opacity = currentOpacity;
 
     element.offsetHeight;
@@ -91,7 +109,8 @@ export function fadeOut(element, duration = 300) {
     element.style.opacity = "0";
 
     return new Promise(resolve => {
-        setTimeout(() => {
+        element._pendingFadeTimeout = setTimeout(() => {
+            element._pendingFadeTimeout = null;
             element.style.display = "none";
             element.style.transition = "";
             resolve();
@@ -101,6 +120,7 @@ export function fadeOut(element, duration = 300) {
 
 
 export function fadeIn(element, duration = 300, display = "block", targetOpacity = null) {
+    clearPendingFade(element);
     element.style.display = display;
     element.style.animation = "none";
     element.style.transition = "none";
@@ -115,8 +135,8 @@ export function fadeIn(element, duration = 300, display = "block", targetOpacity
     element.style.opacity = finalOpacity;
 
     return new Promise(resolve => {
-        setTimeout(() => {
-            element.style.transition = "";
+        element._pendingFadeTimeout = setTimeout(() => {
+            element._pendingFadeTimeout = null;
             resolve();
         }, duration);
     });
