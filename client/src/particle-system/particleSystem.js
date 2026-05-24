@@ -18,36 +18,78 @@ export class Particle {
 }
 
 
-export function createTextParticles({ sourceRC, targetRC, samplePixels }) {
-    const pixels = samplePixels(sourceRC);
-    const particles = [];
-
-    const stride = 10;
-
-    const centerX = targetRC.canvas.clientWidth / 2;
-    const centerY = targetRC.canvas.clientHeight / 2;
-
-    const innerRadius = 250;
-    const outerRadius = 300;
-
-    for (let i = 0; i < pixels.length; i += stride) {
-        const pixel = pixels[i];
-
+export function spawnInRing({ centerX, centerY, innerRadius, outerRadius }) {
+    return function spawn() {
         const angle = Math.random() * Math.PI * 2;
         const radius = (Math.random() * 100 + innerRadius) + Math.random() * (outerRadius - innerRadius);
 
-        const x = centerX + Math.cos(angle) * radius;
-        const y = centerY + Math.sin(angle) * radius;
+        return {
+            x: centerX + Math.cos(angle) * radius,
+            y: centerY + Math.sin(angle) * radius,
+        };
+    };
+}
 
-        // const x = Math.random() * targetRC.canvas.clientWidth;
-        // const y = Math.random() * targetRC.canvas.clientHeight;
 
-        const targetX = pixel.x;
-        const targetY = pixel.y;
-        const { r, g, b } = pixel;
+export function spawnOffscreenNearby({
+    targetRC,
+    margin = 50,
+    maxDistanceExtra = 0,
+    maxIterations = 100
+}) {
+    return function spawn(refX, refY) {
+        const w = targetRC.canvas.clientWidth;
+        const h = targetRC.canvas.clientHeight;
+        const maxDistance = Math.min(w, h) + maxDistanceExtra;
+
+        for (let i = 0; i < maxIterations; i++) {
+            const angle = Math.random() * 2 * Math.PI;
+            const r = Math.sqrt(Math.random()) * maxDistance;
+            const x = refX + Math.cos(angle) * r;
+            const y = refY + Math.sin(angle) * r;
+
+            if (x < -margin || x > w + margin || y < -margin || y > h + margin) {
+                return { x, y };
+            }
+        }
+
+        return { x: refX, y: -margin };
+    };
+}
+
+
+export function samplePixelTargets({ sourceRC, samplePixels, stride }) {
+    const pixels = samplePixels(sourceRC);
+    const targets = [];
+
+    for (let i = 0; i < pixels.length; i += stride) {
+        const pixel = pixels[i];
+        targets.push({
+            targetX: pixel.x,
+            targetY: pixel.y,
+            targetColor: { r: pixel.r, g: pixel.g, b: pixel.b },
+            targetRadius: 1,
+        });
+    }
+
+    return targets;
+}
+
+
+export function createParticlesFromTargets({ targets, spawn }) {
+    const particles = [];
+
+    for (const target of targets) {
+        const { x, y } = spawn(target.targetX, target.targetY);
 
         particles.push(
-            new Particle(x, y, targetX, targetY, 1, 1, `rgb(${r}, ${g}, ${b})`, `rgb(${r}, ${g}, ${b})`));
+            new Particle(
+                x, y,
+                target.targetX, target.targetY,
+                target.targetRadius, target.targetRadius,
+                { ...target.targetColor }, { ...target.targetColor }
+            )
+        );
     }
 
     return particles;
@@ -58,7 +100,7 @@ export function renderParticles(particles, rc) {
     for (const p of particles) {
         rc.ctx.beginPath();
         rc.ctx.arc(p.x, p.y, p.radius, 0, 2 * Math.PI);
-        rc.ctx.fillStyle = p.color;
+        rc.ctx.fillStyle = `rgb(${p.color.r}, ${p.color.g}, ${p.color.b})`;
         rc.ctx.fill();
     }
 }

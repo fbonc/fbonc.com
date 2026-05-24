@@ -1,10 +1,19 @@
 import { createRenderingContext, resizeCanvas, clearCanvas } from "./canvas.js";
-import { createTextParticles, renderParticles } from "./particleSystem.js";
+import { createParticlesFromTargets, renderParticles, samplePixelTargets } from "./particleSystem.js";
+import { spawnInRing, spawnOffscreenNearby } from "./particleSystem.js";
 import { ParticleAnimator, moveParticlesTowardsTarget, moveParticlesInCircle } from "./animator.js";
 import { explodeParticles, moveParticlesInOrbit } from "./animator.js";
 import { drawElement, samplePixels } from "./sampleElement.js";
 import { hideElement, showElement, hideCanvas } from "./utils.js";
-import { fadeOut, pulseOpacity, fadeIn } from "./utils.js";
+import { fadeOut, pulseOpacity, fadeIn, fadeInCanvas } from "./utils.js";
+import { assignTransitionTargets } from "./transition.js";
+
+
+export const FADE_DURATION_MS = 1000;
+
+const PARTICLE_STRIDE = 10;
+const OFFSCREEN_MARGIN = 50;
+const OFFSCREEN_MAX_DISTANCE_EXTRA = 0;
 
 
 export let activeAnimator = null;
@@ -16,11 +25,26 @@ async function startAnimator(animator) {
 }
 
 
-export const FADE_DURATION_MS = 1000;
-
 function fadeToHtml(el, c) {
     showElement(el);
     hideCanvas(c);
+}
+
+
+async function precaptureElementTargets(elements) {
+    const targetsByElement = new Map();
+
+    for (const el of elements) {
+        await drawElement(el, groundTruthRC);
+        const targets = samplePixelTargets({
+            sourceRC: groundTruthRC,
+            samplePixels,
+            stride: PARTICLE_STRIDE,
+        });
+        targetsByElement.set(el, targets);
+    }
+
+    return targetsByElement;
 }
 
 
@@ -31,20 +55,22 @@ async function initializeParticles() {
     clearCanvas(groundTruthRC);
     clearCanvas(particleCanvasRC);
 
-    await drawElement(sourceElement, groundTruthRC);
+    const elementTargets = await precaptureElementTargets([biotextEl, projectstextEl, othertextEl]);
 
-    const textParticles = createTextParticles({
-        sourceRC: groundTruthRC,
-        targetRC: particleCanvasRC,
-        samplePixels,
+    const textParticles = createParticlesFromTargets({
+        targets: elementTargets.get(currentElement),
+        spawn: spawnInRing({
+            centerX: particleCanvasRC.canvas.clientWidth / 2,
+            centerY: particleCanvasRC.canvas.clientHeight / 2,
+            innerRadius: 250,
+            outerRadius: 300,
+        }),
     });
 
     clearCanvas(particleCanvasRC);
     renderParticles(textParticles, particleCanvasRC);
 
-    hideElement(sourceElement);
-
-    return textParticles;
+    return { textParticles, elementTargets };
 }
 
 
@@ -62,6 +88,7 @@ function randomOrbitArgs() {
     };
 }
 
+
 const clickAnywhereEl = document.getElementById("clickanywhere");
 
 
@@ -69,9 +96,13 @@ const groundTruthRC = createRenderingContext("groundTruthCanvas", { willReadFreq
 const particleCanvasRC = createRenderingContext("particleCanvas", { willReadFrequently: true, });
 
 
-const sourceElement = document.getElementById("biotext");
+const biotextEl = document.getElementById("biotext");
+const projectstextEl = document.getElementById("projectstext");
+const othertextEl = document.getElementById("othertext");
 
-const textParticles = await initializeParticles();
+let currentElement = biotextEl;
+
+const { textParticles, elementTargets } = await initializeParticles();
 
 
 const particlesOrbitAnimator = new ParticleAnimator({
@@ -85,7 +116,7 @@ const particlesOrbitAnimator = new ParticleAnimator({
 startAnimator(particlesOrbitAnimator);
 fadeIn(particleCanvasRC.canvas, FADE_DURATION_MS);
 fadeIn(clickAnywhereEl, FADE_DURATION_MS, "block", 0.8).then(() => {
-    pulseOpacity(clickAnywhereEl, {minOpacity: 0.4, maxOpacity: 0.8, duration: 3000});
+    pulseOpacity(clickAnywhereEl, { minOpacity: 0.4, maxOpacity: 0.8, duration: 3000 });
 });
 
 const particlesToTextAnimator = new ParticleAnimator({
@@ -93,14 +124,14 @@ const particlesToTextAnimator = new ParticleAnimator({
     particles: textParticles,
     animation: moveParticlesTowardsTarget,
     onComplete: () => {
-        fadeToHtml?.(sourceElement, particleCanvas);
+        fadeToHtml?.(currentElement, particleCanvasRC.canvas);
     },
-    speed: 10,
+    speed: 15,
     animationArgs: {
         minSpeed: 0.01,
         accelerationDistance: 120,
         arrivalThreshold: 0.5,
-        speedSmoothing: 0.005
+        speedSmoothing: 0.005,
     }
 });
 
@@ -114,11 +145,79 @@ const explodeParticlesAnimator = new ParticleAnimator({
     speed: 3,
     animationArgs: {
         stopThreshold: 0.1,
-        deceleration: 0.97
+        deceleration: 0.97,
     }
 });
 
-window.addEventListener("click", () => {
+const transitionAnimator = new ParticleAnimator({
+    rc: particleCanvasRC,
+    particles: textParticles,
+    animation: moveParticlesTowardsTarget,
+    onComplete: () => {
+        fadeToHtml(currentElement, particleCanvasRC.canvas);
+    },
+    speed: 12,
+    animationArgs: {
+        minSpeed: 0.01,
+        accelerationDistance: 150,
+        arrivalThreshold: 0.5,
+        speedSmoothing: 0.005,
+        colorLerpRate: 0.06,
+        radiusLerpRate: 0.06,
+        cullOffscreen: true,
+        cullMargin: OFFSCREEN_MARGIN / 2,
+    }
+});
+
+
+async function transitionToElement(newElement) {
+    await activeAnimator?.stop();
+
+    assignTransitionTargets({
+        particles: textParticles,
+        targets: elementTargets.get(newElement),
+        spawnBirth: spawnOffscreenNearby({
+            targetRC: particleCanvasRC,
+            margin: OFFSCREEN_MARGIN,
+            maxDistanceExtra: OFFSCREEN_MAX_DISTANCE_EXTRA,
+        }),
+        chooseDeathPos: spawnOffscreenNearby({
+            targetRC: particleCanvasRC,
+            margin: OFFSCREEN_MARGIN,
+            maxDistanceExtra: OFFSCREEN_MAX_DISTANCE_EXTRA,
+        }),
+        bornRadius: 1,
+    });
+
+    clearCanvas(particleCanvasRC);
+    renderParticles(textParticles, particleCanvasRC);
+
+    await Promise.all([
+        fadeOut(currentElement, FADE_DURATION_MS),
+        fadeInCanvas(particleCanvasRC.canvas, FADE_DURATION_MS),
+    ]);
+
+    currentElement = newElement;
+
+    startAnimator(transitionAnimator);
+}
+
+
+function bindTransition(buttonId, targetElement) {
+    const btn = document.getElementById(buttonId);
+    if (!btn) return;
+    btn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        transitionToElement(targetElement);
+    });
+}
+
+bindTransition("projectsBtn", projectstextEl);
+bindTransition("otherBtn", othertextEl);
+bindTransition("backFromProjectsBtn", biotextEl);
+bindTransition("backFromOtherBtn", biotextEl);
+
+window.addEventListener("click", async () => {
     startAnimator(explodeParticlesAnimator);
-    fadeOut(clickAnywhereEl, 1000);
+    await fadeOut(clickAnywhereEl, 1000);
 });

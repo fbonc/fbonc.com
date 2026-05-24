@@ -57,17 +57,36 @@ export class ParticleAnimator {
     }
 }
 
+function isOffscreen(p, rc, margin = 0) {
+    const w = rc.canvas.clientWidth;
+    const h = rc.canvas.clientHeight;
+    return p.x < -margin || p.x > w + margin || p.y < -margin || p.y > h + margin;
+}
+
+
+function lerp(a, b, t) {
+    return a + (b - a) * t;
+}
+
+
 export function moveParticlesTowardsTarget({
     particles,
     speed,
+    rc = null,
     minSpeed = 0.01,
     accelerationDistance = 120,
     arrivalThreshold = 0.5,
-    speedSmoothing = 0.005
+    speedSmoothing = 0.005,
+    colorLerpRate = 0,
+    radiusLerpRate = 0,
+    cullOffscreen = false,
+    cullMargin = 0
 }) {
     let allArrived = true;
 
-    for (const p of particles) {
+    for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+
         const dx = p.targetX - p.x;
         const dy = p.targetY - p.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
@@ -89,6 +108,20 @@ export function moveParticlesTowardsTarget({
             p.x = p.targetX;
             p.y = p.targetY;
             p.currentSpeed = minSpeed;
+        }
+
+        if (colorLerpRate > 0) {
+            p.color.r = lerp(p.color.r, p.targetColor.r, colorLerpRate);
+            p.color.g = lerp(p.color.g, p.targetColor.g, colorLerpRate);
+            p.color.b = lerp(p.color.b, p.targetColor.b, colorLerpRate);
+        }
+
+        if (radiusLerpRate > 0) {
+            p.radius = lerp(p.radius, p.targetRadius, radiusLerpRate);
+        }
+
+        if (cullOffscreen && p.dying && rc && isOffscreen(p, rc, cullMargin)) {
+            particles.splice(i, 1);
         }
     }
 

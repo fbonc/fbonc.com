@@ -3,7 +3,7 @@ import { clearCanvas } from "./canvas.js";
 
 export async function drawElement(el, rc) {
     const captured = await captureElement(el);
-    
+
     clearCanvas(rc);
     drawCapturedElement(rc.ctx, captured);
 }

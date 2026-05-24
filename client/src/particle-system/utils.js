@@ -28,6 +28,7 @@ export function hideElement(el) {
 
 export function showElement(el) {
     el.style.transition = `opacity ${FADE_DURATION_MS}ms ease`;
+    el.style.display = "";
     el.style.visibility = "visible";
     el.style.pointerEvents = "";
 
@@ -55,6 +56,25 @@ export function showCanvas(c) {
     c.style.transition = "none";
     c.style.visibility = "visible";
     c.style.opacity = "1";
+}
+
+
+export function fadeInCanvas(c, duration = FADE_DURATION_MS) {
+    c.style.transition = "none";
+    c.style.visibility = "visible";
+    c.style.opacity = "0";
+
+    c.offsetHeight;
+
+    c.style.transition = `opacity ${duration}ms ease`;
+    c.style.opacity = "1";
+
+    return new Promise(resolve => {
+        setTimeout(() => {
+            c.style.transition = "";
+            resolve();
+        }, duration);
+    });
 }
 
 
