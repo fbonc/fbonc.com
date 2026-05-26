@@ -1,12 +1,17 @@
-import { createRenderingContext, resizeCanvas, clearCanvas } from "./canvas.js";
+import { createRenderingContext, resizeCanvas } from "./canvas.js";
+
 import { createParticlesFromTargets, renderParticles, samplePixelTargets } from "./particleSystem.js";
 import { spawnInRing, spawnOffscreenNearby } from "./particleSystem.js";
+
 import { ParticleAnimator, moveParticlesTowardsTarget, moveParticlesInCircle } from "./animator.js";
 import { explodeParticles, moveParticlesInOrbit } from "./animator.js";
+
 import { drawElement, samplePixels } from "./sampleElement.js";
-import { hideElement, showElement, hideCanvas } from "./utils.js";
+
+import { hideElement, clearCanvas } from "./utils.js";
 import { fadeOut, pulseOpacity, fadeIn, fadeInCanvas } from "./utils.js";
-import { assignTransitionTargets } from "./transition.js";
+
+import { assignTransitionTargets, fadeToHtml } from "./transition.js";
 
 
 export const FADE_DURATION_MS = 1000;
@@ -23,13 +28,6 @@ async function startAnimator(animator) {
     activeAnimator = animator;
     animator.start();
 }
-
-
-function fadeToHtml(el, c) {
-    showElement(el);
-    hideCanvas(c);
-}
-
 
 async function precaptureElementTargets(elements) {
     const targetsByElement = new Map();

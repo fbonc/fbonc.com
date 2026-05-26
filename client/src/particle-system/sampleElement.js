@@ -1,5 +1,5 @@
-import { showElement, hideElement } from "./utils.js";
-import { clearCanvas } from "./canvas.js";
+import { showElement, hideElement, clearCanvas } from "./utils.js";
+
 
 export async function drawElement(el, rc) {
     const captured = await captureElement(el);

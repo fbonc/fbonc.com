@@ -1,5 +1,6 @@
-import { clearCanvas } from "./canvas.js";
+import { clearCanvas } from "./utils.js";
 import { renderParticles } from "./particleSystem.js";
+import { activeAnimator } from "./main.js";
 
 
 export class ParticleAnimator {
@@ -56,6 +57,14 @@ export class ParticleAnimator {
         this.animationId = requestAnimationFrame(this.draw);
     }
 }
+
+
+export async function startAnimator(animator) {
+    await activeAnimator?.stop();
+    activeAnimator = animator;
+    animator.start();
+}
+
 
 function isOffscreen(p, rc, margin = 0) {
     const w = rc.canvas.clientWidth;

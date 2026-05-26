@@ -1,4 +1,4 @@
-import { clearCanvas } from "./canvas.js";
+import { clearCanvas } from "./utils.js";
 
 
 export class Particle {

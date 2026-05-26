@@ -1,5 +1,6 @@
 import { FADE_DURATION_MS } from "./main.js";
 
+
 export function downloadCanvas(canvas, filename = "download.png") {
     const dataUrl = canvas.toDataURL('image/png');
 
@@ -23,6 +24,12 @@ function clearPendingFade(el) {
         clearTimeout(el._pendingFadeTimeout);
         el._pendingFadeTimeout = null;
     }
+}
+
+
+export function clearCanvas(rc) {
+    const dpr = window.devicePixelRatio || 1;
+    rc.ctx.clearRect(0, 0, rc.canvas.width / dpr, rc.canvas.height / dpr);
 }
 
 

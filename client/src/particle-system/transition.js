@@ -1,4 +1,5 @@
 import { Particle } from "./particleSystem.js";
+import { showElement, hideCanvas } from "./utils.js";
 
 
 function shuffleInPlace(array) {
@@ -60,3 +61,9 @@ export function assignTransitionTargets({
         );
     }
 }
+
+export function fadeToHtml(el, c) {
+    showElement(el);
+    hideCanvas(c);
+}
+
