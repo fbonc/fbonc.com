@@ -34,9 +34,3 @@ export function resizeCanvas(rc) {
 
     rc.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
-
-
-export function clearCanvas(rc) {
-    const dpr = window.devicePixelRatio || 1;
-    rc.ctx.clearRect(0, 0, rc.canvas.width / dpr, rc.canvas.height / dpr);
-}
