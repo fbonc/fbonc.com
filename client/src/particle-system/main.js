@@ -213,13 +213,18 @@ function bindTransition(buttonId, targetElement) {
     });
 }
 
+
 bindTransition("projectsBtn", projectstextEl);
 bindTransition("otherBtn", othertextEl);
 bindTransition("backFromProjectsBtn", biotextEl);
 bindTransition("backFromOtherBtn", biotextEl);
 
-window.addEventListener("click", async () => {
+
+async function activate() {
     clickAnywhereDismissed = true;
     startAnimator(explodeParticlesAnimator);
     await fadeOut(clickAnywhereEl, 1000);
-});
+}
+
+window.addEventListener("click", async () => { activate(); });
+window.addEventListener("keydown", async (event) => { if (event.code === "Space") activate(); });
