@@ -157,7 +157,7 @@ const transitionAnimator = new ParticleAnimator({
     onComplete: () => {
         fadeToHtml(currentElement, particleCanvasRC.canvas);
     },
-    speed: 12,
+    speed: 150,
     animationArgs: {
         minSpeed: 0.01,
         accelerationDistance: 150,
@@ -225,6 +225,7 @@ async function activate() {
     startAnimator(explodeParticlesAnimator);
     await fadeOut(clickAnywhereEl, 1000);
 }
+
 
 window.addEventListener("click", async () => { activate(); });
 window.addEventListener("keydown", async (event) => { if (event.code === "Space") activate(); });
