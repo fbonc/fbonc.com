@@ -12,84 +12,71 @@
 <body class="relative h-screen overflow-hidden bg-radial from-frombg to-tobg text-text">
 
     <div class="relative h-screen w-screen">
-        <p class="text-2xs absolute top-18/19 left-1/2 -translate-x-1/2 -translate-y-1/2 font-display font-thin tracking-widest" id="clickanywhere" style="opacity: 0;">click anywhere</p>
+        <p class="text-2xs absolute top-18/19 left-1/2 -translate-x-1/2 -translate-y-1/2 font-display font-thin tracking-widest"
+            id="clickanywhere" style="opacity: 0;">click anywhere</p>
     </div>
 
-    <div
-        class="absolute z-10 left-[26%] top-1/2 -translate-x-1/2 -translate-y-1/2
+    <div class="absolute z-10 left-[26%] top-1/2 -translate-x-1/2 -translate-y-1/2
                w-[clamp(630px,34vw,820px)] h-[clamp(320px,28vh,430px)]
                flex flex-col justify-center
-               font-display"
-        id="biotext"
-        style="visibility: hidden; opacity: 0; pointer-events: none;"
-    >
+               font-display" id="biotext" style="visibility: hidden; opacity: 0; pointer-events: none;">
         <h1 class="text-[clamp(2.25rem,2.4vw,3.25rem)] font-light">
             Felipe Bonchristiano
         </h1>
 
         <p class="text-[clamp(0.875rem,0.9vw,1.1rem)] font-thin mt-2">
             Second-year Mathematics & Computer Science student at
-            <a  href="https://siebelschool.illinois.edu/"
-                class="bg-highlight px-1 rounded hover:bg-particles/50 transition-colors"
-                target="_blank"
-            >UIUC</a>
+            <a href="https://siebelschool.illinois.edu/"
+                class="bg-highlight px-1 rounded hover:bg-particles/50 transition-colors" target="_blank">UIUC</a>
             from Brazil, focusing on artificial intelligence, applied analysis, and probability. My broader interests
             include computational biology and philosophy, particularly metaphysics and epistemology.
         </p>
 
         <p class="text-[clamp(0.875rem,0.9vw,1.1rem)] font-thin mt-3">
             I currently conduct research in machine learning and healthcare in Prof. Jimeng Sun’s
-            <a  href="https://www.sunlab.org/"
-                class="bg-highlight px-1 rounded hover:bg-particles/50 transition-colors"
-                target="_blank"
-            >SunLab</a>
+            <a href="https://www.sunlab.org/" class="bg-highlight px-1 rounded hover:bg-particles/50 transition-colors"
+                target="_blank">SunLab</a>
             and previously interned at
-            <a  href="https://www.btgpactual.us/"
-                class="bg-highlight px-1 rounded hover:bg-particles/50 transition-colors"
-                target="_blank"
-            >BTG Pactual</a>,
+            <a href="https://www.btgpactual.us/"
+                class="bg-highlight px-1 rounded hover:bg-particles/50 transition-colors" target="_blank">BTG
+                Pactual</a>,
             Latin America’s largest investment bank, as a software engineer.
         </p>
 
         <hr class="mt-4 border-zinc-500 w-[102%] ml-[-1%]">
 
-        <div class="flex flex-wrap gap-3 mt-4 text-[clamp(0.875rem,0.9vw,1.1rem)] font-thin italic">
-            <button id="projectsBtn" class="font-light transition-all duration-300 hover:[text-shadow:0_0_8px_rgba(255,255,255,0.8)]">
+        <div class="flex flex-wrap items-center gap-3 mt-4 text-[clamp(0.875rem,0.9vw,1.1rem)] font-thin italic">
+            <button id="projectsBtn"
+                class="font-light transition-all duration-300 hover:[text-shadow:0_0_8px_rgba(255,255,255,0.8)]">
                 projects
             </button>
 
-            <button id="otherBtn" class="font-light transition-all duration-300 hover:[text-shadow:0_0_8px_rgba(255,255,255,0.8)]">
+            <button id="otherBtn"
+                class="font-light transition-all duration-300 hover:[text-shadow:0_0_8px_rgba(255,255,255,0.8)]">
                 other
             </button>
 
-            <a href="https://www.linkedin.com/in/fbonc"
-                class="hover:text-gray-600 transition-colors"
-                target="_blank">
+            <p class="not-italic text-zinc-500"> | </p>
+
+            <a href="https://www.linkedin.com/in/fbonc" class="hover:text-gray-600 transition-colors" target="_blank">
                 linkedin
             </a>
-
-            <a href="/resume.pdf"
-                class="hover:text-gray-600 transition-colors"
-                target="_blank">
+            
+            <a href="/resume.pdf" class="hover:text-gray-600 transition-colors" target="_blank">
                 resume
             </a>
 
-            <a href="https://github.com/fbonc"
-                class="hover:text-gray-600 transition-colors"
-                target="_blank">
+            <a href="https://github.com/fbonc" class="hover:text-gray-600 transition-colors" target="_blank">
                 github
             </a>
+            
         </div>
     </div>
 
-    <div
-        class="absolute z-10 left-[26%] top-1/2 -translate-x-1/2 -translate-y-1/2
+    <div class="absolute z-10 left-[26%] top-1/2 -translate-x-1/2 -translate-y-1/2
                w-[clamp(630px,34vw,820px)] h-[clamp(320px,28vh,430px)]
                flex flex-col justify-center
-               font-display"
-        id="projectstext"
-        style="visibility: hidden; opacity: 0; pointer-events: none;"
-    >
+               font-display" id="projectstext" style="visibility: hidden; opacity: 0; pointer-events: none;">
         <h1 class="text-[clamp(2.25rem,2.4vw,3.25rem)] font-light">
             Projects
         </h1>
@@ -99,20 +86,17 @@
         </p>
 
         <div class="flex flex-wrap gap-3 mt-4 text-[clamp(0.875rem,0.9vw,1.1rem)] font-thin italic">
-            <button id="backFromProjectsBtn" class="font-light transition-all duration-300 hover:[text-shadow:0_0_8px_rgba(255,255,255,0.8)]">
+            <button id="backFromProjectsBtn"
+                class="font-light transition-all duration-300 hover:[text-shadow:0_0_8px_rgba(255,255,255,0.8)]">
                 back
             </button>
         </div>
     </div>
 
-    <div
-        class="absolute z-10 left-[26%] top-1/2 -translate-x-1/2 -translate-y-1/2
+    <div class="absolute z-10 left-[26%] top-1/2 -translate-x-1/2 -translate-y-1/2
                w-[clamp(630px,34vw,820px)] h-[clamp(320px,28vh,430px)]
                flex flex-col justify-center
-               font-display"
-        id="othertext"
-        style="visibility: hidden; opacity: 0; pointer-events: none;"
-    >
+               font-display" id="othertext" style="visibility: hidden; opacity: 0; pointer-events: none;">
         <h1 class="text-[clamp(2.25rem,2.4vw,3.25rem)] font-light">
             Other
         </h1>
@@ -122,7 +106,8 @@
         </p>
 
         <div class="flex flex-wrap gap-3 mt-4 text-[clamp(0.875rem,0.9vw,1.1rem)] font-thin italic">
-            <button id="backFromOtherBtn" class="font-light transition-all duration-300 hover:[text-shadow:0_0_8px_rgba(255,255,255,0.8)]">
+            <button id="backFromOtherBtn"
+                class="font-light transition-all duration-300 hover:[text-shadow:0_0_8px_rgba(255,255,255,0.8)]">
                 back
             </button>
         </div>
