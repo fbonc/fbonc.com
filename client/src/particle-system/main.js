@@ -1,3 +1,5 @@
+import "../input.css";
+
 import { createRenderingContext, resizeCanvas } from "./canvas.js";
 
 import { createParticlesFromTargets, renderParticles, samplePixelTargets } from "./particleSystem.js";
