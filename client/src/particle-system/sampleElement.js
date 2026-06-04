@@ -1,4 +1,5 @@
 import { showElement, hideElement, clearCanvas } from "./utils.js";
+// import { html2canvas } from 'html2canvas-pro';
 
 
 export async function drawElement(el, rc) {

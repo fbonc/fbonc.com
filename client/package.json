@@ -25,6 +25,7 @@
     "tailwindcss": "^4.3.0"
   },
   "dependencies": {
-    "html2canvas-pro": "^2.0.2"
+    "@types/html2canvas": "^0.5.35",
+    "html2canvas-pro": "^2.0.4"
   }
 }
