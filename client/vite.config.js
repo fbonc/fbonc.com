@@ -5,4 +5,7 @@ export default defineConfig({
   plugins: [
     tailwindcss(),
   ],
+  server: {
+    allowedHosts: ["quaking-plop-congenial.ngrok-free.dev"],
+  }
 })
