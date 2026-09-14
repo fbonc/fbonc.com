@@ -1,4 +1,4 @@
-# Proposed architecture: WebGPU particle engine
+# Architecture: WebGPU particle engine
 
 One engine, one particle pool, powering everything on the page: text morphing (as today) and a real-time Voronoi-stippled image cycle.
 

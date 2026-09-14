@@ -11,4 +11,4 @@ Design and learning notes for the particle system behind the personal page.
 
 ## Topics
 
-- [[learning/00_overview|Learning]], an ordered end-to-end course in WebGPU and the algorithms this project is built from, with a runnable checkpoint at every stage. Nothing in it is specific to this codebase.
+- [[learning/00_overview|Start here]], the minimum setup, WebGPU knowledge, algorithms, and build order needed to begin the rewrite.
