@@ -46,9 +46,3 @@ An explicit Director state machine connects the graphics engine to the website. 
 The particle layer complements semantic HTML instead of replacing it. Page content is temporarily rasterized into targets during a morph, then the real DOM takes over once the transition finishes, keeping text sharp and links accessible. Resizing regenerates targets for the new layout, while browsers without WebGPU receive the static portfolio without the animation layer.
 
 **Built with:** TypeScript, WebGPU, WGSL, Vite, Tailwind CSS, and `html2canvas-pro`.
-
-Detailed design notes are available in the [WebGPU architecture documentation](docs/02_webgpu-architecture.md).
-
----
-
-Designed and built by [Felipe Bonchristiano](https://github.com/fbonc).
