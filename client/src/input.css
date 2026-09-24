@@ -13,14 +13,14 @@
 
 
     /* PRESET 1 */
-    /* --color-frombg: #dccdcc;
+    --color-frombg: #dccdcc;
     --color-tobg: color-mix(in srgb, var(--color-frombg) 70%, black 30%);
     
 
     --color-particles: #545980;
     --color-highlight: color-mix(in srgb, var(--color-particles) 50%, white 50%);
 
-    --color-text: #000000; */
+    --color-text: #000000;
 
     /* PRESET 2 */
     /* --color-frombg: #401b14;
@@ -33,14 +33,14 @@
     --color-text: #e9ddd4; */
 
     /* PRESET 3 */
-    --color-frombg: #1a1a1a;
+    /* --color-frombg: #1a1a1a;
     --color-tobg: color-mix(in srgb, var(--color-frombg) 50%, black 50%);
     
 
     --color-particles: #357266;
     --color-highlight: color-mix(in srgb, var(--color-particles) 50%, black 50%);
 
-    --color-text: #719a92;
+    --color-text: #719a92; */
 
     /* PRESET 4 */
     /* --color-frombg: #000000;

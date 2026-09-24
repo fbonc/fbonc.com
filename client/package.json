@@ -17,10 +17,13 @@
   "scripts": {
     "preview": "vite preview",
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "check": "tsc --noEmit"
   },
   "devDependencies": {
+    "@webgpu/types": "^0.1.72",
     "tailwindcss": "^4.3.0",
+    "typescript": "^7.0.2",
     "vite": "^8.0.16"
   },
   "dependencies": {
