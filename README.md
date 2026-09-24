@@ -1,8 +1,8 @@
 # fbonc.com
 
-My personal portfolio, built around a custom WebGPU particle engine that turns page content and images into a single, continuous field of motion.
+My website, built around a custom WebGPU particle engine that turns page content and images into a single, continuous field of motion.
 
-The site is both an introduction to my work and a graphics project in its own right. Text assembles from particles, interface states flow into one another, and images emerge through real-time Voronoi stippling—all from one GPU-resident particle pool.
+The site is both an introduction to my work and a graphics project in its own right. Text assembles from particles, interface states flow into one another, and images emerge through real-time Voronoi stippling, all from one GPU-resident particle pool.
 
 [Visit fbonc.com](https://fbonc.com)
 
