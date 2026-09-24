@@ -27,7 +27,7 @@ flowchart TB
     G -. arrival statistics .-> D
 ```
 
-### One pool, many forms
+### ParticlePool
 
 `ParticlePool` is the engine's single source of truth. It uses fixed-capacity WebGPU storage buffers rather than JavaScript objects or per-frame buffer uploads. A particle stores its current and target position, velocity, radius, packed color, cohort, and a small scratch region used by its active behavior.
 
@@ -45,8 +45,6 @@ Motion is implemented as composable WGSL behaviors:
 - **Relax** follows the continuously moving centroids produced by the stipple pipeline.
 
 All simulation is delta-time integrated, so animation speed is independent of the display refresh rate. After each behavior step, a shared compute stage updates color and radius from journey progress. Because interpolation is tied to spatial progress instead of elapsed time, every particle reaches its exact target appearance when it lands.
-
-### Spatially coherent morphing
 
 Before a transition, both particles and targets are ordered by Morton code. Matching by spatial rank preserves locality: nearby particles tend to receive nearby destinations. The result is a legible, flowing morph instead of the visual noise produced by random assignment.
 
